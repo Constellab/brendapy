@@ -1,0 +1,22 @@
+*.DS_Store
+*.pyc
+.idea
+
+brendapy.egg-info
+.pytest_cache
+.tox
+dist
+
+# data for resources
+*.zip
+data
+
+# downloaded resources
+brendapy/resources/data
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
