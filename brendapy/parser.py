@@ -375,9 +375,11 @@ class BrendaParser(object):
         deprecated_ec = {}
         proteins = {}  
         
-        is_deprecated_ec = not ec_data['PR']
-        if is_deprecated_ec:
-            _id = ec_data['ID']
+        def is_deprecated(_id):
+            return ("transferred" in _id) or ("deleted" in _id)
+        
+        _id = ec_data['ID']
+        if is_deprecated(_id):
             if "transferred" in _id:
                 deprecated_ec = {
                     "old_ec": ec,
