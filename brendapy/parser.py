@@ -379,10 +379,6 @@ class BrendaParser(object):
             return ("transferred" in _id) or ("deleted" in _id)
         
         _id = ec_data['ID']
-        
-        print("xxxxx")
-        print(_id)
-        
         if is_deprecated(_id):
             deprecated_ec = {
                 "old_ec": ec,
