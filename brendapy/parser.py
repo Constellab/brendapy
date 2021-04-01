@@ -379,34 +379,30 @@ class BrendaParser(object):
             return ("transferred" in _id) or ("deleted" in _id)
         
         _id = ec_data['ID']
+        
+        print("xxxxx")
+        print(_id)
+        
         if is_deprecated(_id):
+            deprecated_ec = {
+                "old_ec": ec,
+                "new_ec": [],
+                "data": {
+                    'ID': str(_id),
+                    'RN': str(ec_data.get("RN","")),
+                    "reason": "",
+                }
+            }
+
+            new_ec = deprecated_id_re.findall(_id)
+            for n_ec in new_ec:
+                deprecated_ec["new_ec"].append( n_ec )
+                
             if "transferred" in _id:
-                deprecated_ec = {
-                    "old_ec": ec,
-                    "new_ec": "",
-                    "data": {
-                        'ID': str(_id),
-                        'RN': str(ec_data.get("RN","")),
-                        "reason": "transferred",
-                    }
-                }
+                deprecated_ec["data"]["reason"] = "transferred"
 
-                new_ec = deprecated_id_re.findall(_id)
-                deprecated_ec["new_ec"] = []
-
-                for n_ec in new_ec:
-                    deprecated_ec["new_ec"].append( n_ec )
-
-            elif "deleted" in _id:
-                deprecated_ec = {
-                    "old_ec": ec,
-                    "new_ec": "",
-                    "data": {
-                        'ID': str(_id),
-                        'RN': str(ec_data.get("RN","")),
-                        "reason": "deleted",
-                    }
-                }
+            if "deleted" in _id:
+                deprecated_ec["data"]["reason"] = "deleted"
             
         else:
             for key in ec_data['PR'].keys():
