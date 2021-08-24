@@ -17,7 +17,7 @@ import requests
 import shutil
 
 BASE_PATH = os.path.dirname(os.path.realpath(__file__))
-RESOURCES_PATH = os.getenv("RESOURCES_PATH") or "/data/biota/biodata/"
+RESOURCES_PATH = os.getenv("BIOTA_BIODATA_DIR") or os.getenv("RESOURCES_PATH") or "/data/gws_biota/biodata/"
 if not RESOURCES_PATH:
     raise Exception("Environment variabe BIOTA_BIODATA_DIR is not set")
 BRENDA_FILE = os.path.join(RESOURCES_PATH, "brenda", "brenda", "brenda_download.txt")
