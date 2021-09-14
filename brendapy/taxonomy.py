@@ -104,8 +104,7 @@ def parse_taxonomy_data():
     logging.warning("... taxonomy information parsed in {} s.".format((te - ts)))
 
 
-if not os.path.exists(TAXONOMY_DATA):
-    parse_taxonomy_data()
+
 
 
 # ----------------------------------------------------
@@ -118,6 +117,10 @@ class Taxonomy(object):
     def __init__(self, f_taxonomy=TAXONOMY_DATA):
         if Taxonomy.tid_name_dict is None:
             ts = time.time()
+
+            if not os.path.exists(TAXONOMY_DATA):
+                parse_taxonomy_data()
+
             with open(f_taxonomy, "r") as f_tax:
                 data = ujson.load(f_tax)
                 Taxonomy.tid_name_dict = {int(k): v for k, v in data["tid_name_dict"].items()}
