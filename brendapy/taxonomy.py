@@ -115,12 +115,11 @@ class Taxonomy(object):
     node_parent_dict = None  # storage of tree information
 
     def __init__(self, f_taxonomy=TAXONOMY_DATA):
+        if not os.path.exists(TAXONOMY_DATA):
+            parse_taxonomy_data()
+
         if Taxonomy.tid_name_dict is None:
             ts = time.time()
-
-            if not os.path.exists(TAXONOMY_DATA):
-                parse_taxonomy_data()
-
             with open(f_taxonomy, "r") as f_tax:
                 data = ujson.load(f_tax)
                 Taxonomy.tid_name_dict = {int(k): v for k, v in data["tid_name_dict"].items()}
@@ -208,7 +207,7 @@ class Taxonomy(object):
         return [None, None, -1]
 
 
-if __name__ == "__main__":
-    #tax = Taxonomy()
-    #print(tax.get_parent_nodes(tax_id=7227))
-    pass
+# if __name__ == "__main__":
+#     tax = Taxonomy()
+#     print(tax.get_parent_nodes(tax_id=7227))
+#     pass

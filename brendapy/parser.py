@@ -57,7 +57,7 @@ from pprint import pprint
 from brendapy import utils
 from brendapy.settings import BRENDA_FILE
 from brendapy.taxonomy import Taxonomy
-from brendapy.tissues import BTO
+from brendapy.tissues import get_bto
 from brendapy.substances import CHEBI
 
 #TAXONOMY = Taxonomy()
@@ -428,6 +428,9 @@ class BrendaProtein(object):
         :param key: integer protein key (BRENDA key for protein)
         :param data: data dictionary for the complete ec number
         """
+        #BTO
+        BTO = get_bto()
+        
         protein_info = data['PR'][key]['data']
 
         # organism
