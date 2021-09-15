@@ -58,7 +58,7 @@ from brendapy import utils
 from brendapy.settings import BRENDA_FILE
 from brendapy.taxonomy import Taxonomy
 from brendapy.tissues import get_bto
-from brendapy.substances import CHEBI
+from brendapy.substances import get_substances
 
 #TAXONOMY = Taxonomy()
 
@@ -97,7 +97,8 @@ class BrendaParser(object):
         "KKM": "1/mM/s",
         "SA": "µmol/min/mg"
     }
-
+    CHEBI = None
+    
     def __init__(self, brenda_file=BRENDA_FILE):
         """ Initialize parser and parse BRENDA file.
 
@@ -223,14 +224,18 @@ class BrendaParser(object):
 
         return results
 
-    @staticmethod
-    def _store_item(results, bid, item, ec=None):
+    @classmethod
+    def _store_item(cls, results, bid, item, ec=None):
         """ Store parsed item for bid.
 
         :param bid:
         :param item:
         :return:
         """
+
+        if not cls.CHEBI:
+            cls.CHEBI = get_substances()
+
         if bid == "ID":
             results[bid] = item
         elif bid in {"RN", "RE", "RT", "SN"}:
@@ -302,8 +307,8 @@ class BrendaParser(object):
                             substrate = match_s.group(2)
 
                             info['substrate'] = substrate
-                            if substrate in CHEBI:
-                                info['chebi'] = CHEBI[substrate]["key"]
+                            if substrate in cls.CHEBI:
+                                info['chebi'] = cls.CHEBI[substrate]["key"]
                             else:
                                 logging.info(
                                     f"Substrate could not be found in CHEBI: '{substrate}'")
