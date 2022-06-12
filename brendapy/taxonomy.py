@@ -147,7 +147,8 @@ class Taxonomy(object):
         :return: NBCI taxonomy id or None if not existing in taxonomy
         """
         if name not in self.name_tid_dict:
-            logging.warning(f"Taxonomy id could not be resolved for species/organism: {name}")
+            #logging.warning(f"Taxonomy id could not be resolved for species/organism: {name}")
+            pass
         return self.name_tid_dict.get(name, None)
 
     def get_scientific_name(self, tax_id):
@@ -175,7 +176,7 @@ class Taxonomy(object):
             try:
                 parent_id = self.node_parent_dict[tid]
             except KeyError:
-                logging.error(f"taxonomy id not found: {tax_id}")
+                #logging.error(f"taxonomy id not found: {tax_id}")
                 return None
 
             nodes.append(parent_id)

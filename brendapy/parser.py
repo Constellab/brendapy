@@ -208,7 +208,7 @@ class BrendaParser(object):
                     if bid in BrendaParser.BRENDA_KEYS:
                         in_item = True
                     else:
-                        logging.error(f"{ec}_{bid}: BRENDA key not supported in line: `{line}`")
+                        #logging.error(f"{ec}_{bid}: BRENDA key not supported in line: `{line}`")
                         item = None
 
                 # store last entry
@@ -255,7 +255,8 @@ class BrendaParser(object):
                     pubmed = int(pubmed)  # integer keys for all pubmeds
                     results[bid][rid]['pubmed'] = pubmed
             else:
-                logging.error(f"Reference could not be parsed: `{item}`")
+                #logging.error(f"Reference could not be parsed: `{item}`")
+                pass
         # everything else
         else:
             match = BrendaParser.PATTERN_ALL.match(item)
@@ -276,13 +277,15 @@ class BrendaParser(object):
                     comment = "(#" + tokens[1].strip()
                     comment = comment[1:-1]
                 else:
-                    logging.error(f"comment could not be parsed: '{data_all}'")
+                    #logging.error(f"comment could not be parsed: '{data_all}'")
+                    pass
 
                 # check data
                 if len(data) == 0:
-                    logging.warning(f"{ec}_{bid}: empty information not stored: '{data_all}'")
+                    #logging.warning(f"{ec}_{bid}: empty information not stored: '{data_all}'")
+                    pass
                 elif data == "more":
-                    logging.info(f"{ec}_{bid}: 'more' data not stored: {data_all}")
+                    #logging.info(f"{ec}_{bid}: 'more' data not stored: {data_all}")
                     return
 
                 # store info as dict
@@ -297,7 +300,8 @@ class BrendaParser(object):
                     info["units"] = BrendaParser.UNITS[bid]
                     if data.startswith("-999"):
                         # parse value
-                        logging.info(f"{ec}_{bid}: '-999' values not parsed: {data}")
+                        #logging.info(f"{ec}_{bid}: '-999' values not parsed: {data}")
+                        pass
                     else:
                         match_s = BrendaParser.PATTERN_VALUE.match(info["data"])
                         if match_s:
@@ -310,16 +314,16 @@ class BrendaParser(object):
                             if substrate in cls.CHEBI:
                                 info['chebi'] = cls.CHEBI[substrate]["key"]
                             else:
-                                logging.info(
-                                    f"Substrate could not be found in CHEBI: '{substrate}'")
+                                #logging.info(f"Substrate could not be found in CHEBI: '{substrate}'")
+                                pass
                         else:
                             # trying the simple patterns without substrate
                             try:
                                 #info['value'] = float(info["data"])
                                 info['value'] = info["data"]
                             except:
-                                logging.error(
-                                    f"data could not be converted to float: {info['data']}")
+                                #logging.error(f"data could not be converted to float: {info['data']}")
+                                pass
 
                 for pid in ids:
                     if bid == "PR":
@@ -331,9 +335,11 @@ class BrendaParser(object):
                             results[bid][pid] = [info]
             else:
                 if bid == "SY" and item[0] != '#':
-                    logging.info(f"{ec}_{bid}: generic synonyms are not stored: {item}")
+                    #logging.info(f"{ec}_{bid}: generic synonyms are not stored: {item}")
+                    pass
                 else:
-                    logging.error(f"{ec}_{bid}: could not be parsed: `{item}`")
+                    #logging.error(f"{ec}_{bid}: could not be parsed: `{item}`")
+                    pass
 
     @staticmethod
     def _get_ec_from_line(line):
@@ -444,7 +450,7 @@ class BrendaProtein(object):
             organism = f"{match_organism.group(1)} {match_organism.group(2)}"
         else:
             organism = protein_info
-            logging.warning(f"Organism could not be parsed from: '{protein_info}'")
+            #logging.warning(f"Organism could not be parsed from: '{protein_info}'")
 
         # taxonomy
         t = Taxonomy()
@@ -500,7 +506,8 @@ class BrendaProtein(object):
                     item['bto'] = bto_term
                     tissues.add(bto_term)
                 else:
-                    logging.error(f"Source/Tissue not found in Brenda Tissue Ontology (BTO): '{tissue}'")
+                    #logging.error(f"Source/Tissue not found in Brenda Tissue Ontology (BTO): '{tissue}'")
+                    pass
         self.data["tissues"] = tissues
 
     @property
