@@ -22,6 +22,6 @@ if not RESOURCES_PATH:
     raise Exception("Environment variabe BIOTA_BIODATA_DIR is not set")
 BRENDA_FILE = os.path.join(RESOURCES_PATH, "brenda", "brenda", "brenda_download.txt")
 TAXONOMY_DATA = os.path.join(RESOURCES_PATH, "brenda", "taxonomy", "taxonomy.json")
-TAXONOMY_ZIP = os.path.join(RESOURCES_PATH, "brenda", "taxonomy", "taxdump.zip")
+TAXONOMY_ZIP = os.path.join(RESOURCES_PATH, "brenda", "taxonomy", "taxdmp.zip")
 BTO_DATA = os.path.join(RESOURCES_PATH, "brenda", "bto", "bto.json")
 CHEBI_DATA = os.path.join(RESOURCES_PATH, "brenda", "chebi", "chebi.json")
