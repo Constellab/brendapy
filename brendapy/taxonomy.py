@@ -40,13 +40,11 @@ Taxonomy names file (names.dmp):
 """
 
 import os
-import io
 import logging
 import time
-import zipfile
 import ujson
 
-from brendapy.settings import TAXONOMY_DATA, TAXONOMY_ZIP
+from brendapy.settings import TAXONOMY_DATA, TAXONOMY_DIR
 
 
 def parse_taxonomy_data():
@@ -64,32 +62,24 @@ def parse_taxonomy_data():
     name_tid_dict = {}
     node_parent_dict = {}
 
-    # load from zip file
-    with zipfile.ZipFile(TAXONOMY_ZIP) as z:
-        
-        if 'taxdump/names.dmp' in z.namelist():
-            prefix = "taxdump/"
-        else:
-            prefix = ""
-        
-        # parse names information
-        with io.TextIOWrapper(z.open(prefix+"names.dmp", "r")) as f_names:
-            for line in f_names:
-                # every line is a single node which is converted to a dictionary entry
-                items = [t.strip() for t in line.split("|")]
-                tid = int(items[0])
-                name = items[1]
-                # store name
-                name_tid_dict[name] = tid
-                if items[3] == "scientific name":
-                    tid_name_dict[tid] = name
+    # parse names information
+    with open(os.path.join(TAXONOMY_DIR, "names.dmp"), "r", encoding="utf-8") as f_names:
+        for line in f_names:
+            # every line is a single node which is converted to a dictionary entry
+            items = [t.strip() for t in line.split("|")]
+            tid = int(items[0])
+            name = items[1]
+            # store name
+            name_tid_dict[name] = tid
+            if items[3] == "scientific name":
+                tid_name_dict[tid] = name
 
-        # parse tree information
-        with io.TextIOWrapper(z.open(prefix+"nodes.dmp", "r")) as f_nodes:
-            for line in f_nodes:
-                items = [t.strip() for t in line.split("|")]
-                node, parent = int(items[0]), int(items[1])
-                node_parent_dict[node] = parent
+    # parse tree information
+    with open(os.path.join(TAXONOMY_DIR, "nodes.dmp"), "r", encoding="utf-8") as f_nodes:
+        for line in f_nodes:
+            items = [t.strip() for t in line.split("|")]
+            node, parent = int(items[0]), int(items[1])
+            node_parent_dict[node] = parent
 
     # store data
     data = {
@@ -102,9 +92,6 @@ def parse_taxonomy_data():
 
     te = time.time()
     logging.warning("... taxonomy information parsed in {} s.".format((te - ts)))
-
-
-
 
 
 # ----------------------------------------------------
@@ -147,7 +134,7 @@ class Taxonomy(object):
         :return: NBCI taxonomy id or None if not existing in taxonomy
         """
         if name not in self.name_tid_dict:
-            #logging.warning(f"Taxonomy id could not be resolved for species/organism: {name}")
+            # logging.warning(f"Taxonomy id could not be resolved for species/organism: {name}")
             pass
         return self.name_tid_dict.get(name, None)
 
@@ -176,7 +163,7 @@ class Taxonomy(object):
             try:
                 parent_id = self.node_parent_dict[tid]
             except KeyError:
-                #logging.error(f"taxonomy id not found: {tax_id}")
+                # logging.error(f"taxonomy id not found: {tax_id}")
                 return None
 
             nodes.append(parent_id)

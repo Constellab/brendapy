@@ -9,19 +9,16 @@ first import.
 
 """
 import os
-import logging
-from zipfile import ZipFile
 
-
-import requests
-import shutil
 
 BASE_PATH = os.path.dirname(os.path.realpath(__file__))
 RESOURCES_PATH = os.getenv("BIOTA_BIODATA_DIR") or os.getenv("RESOURCES_PATH") or "/data/gws_biota/biodata/"
 if not RESOURCES_PATH:
-    raise Exception("Environment variabe BIOTA_BIODATA_DIR is not set")
-BRENDA_FILE = os.path.join(RESOURCES_PATH, "brenda", "brenda", "brenda_download.txt")
-TAXONOMY_DATA = os.path.join(RESOURCES_PATH, "brenda", "taxonomy", "taxonomy.json")
-TAXONOMY_ZIP = os.path.join(RESOURCES_PATH, "brenda", "taxonomy", "taxdmp.zip")
-BTO_DATA = os.path.join(RESOURCES_PATH, "brenda", "bto", "bto.json")
-CHEBI_DATA = os.path.join(RESOURCES_PATH, "brenda", "chebi", "chebi.json")
+    raise Exception("Environment variable BIOTA_BIODATA_DIR is not set")
+
+BRENDA_FILE = os.path.join(RESOURCES_PATH, "brenda", "brenda_download.txt")
+TAXONOMY_DIR = os.path.join(RESOURCES_PATH, "ncbi", "taxdump")
+TAXONOMY_DATA = os.path.join(TAXONOMY_DIR, "taxonomy.json")
+BTO_DATA = os.path.join(RESOURCES_PATH, "bto", "bto.owl")
+CHEBI_OBO_DATA = os.path.join(RESOURCES_PATH, "chebi", "chebi.obo")
+CHEBI_JSON_DATA = os.path.join(RESOURCES_PATH, "chebi", "chebi.json")

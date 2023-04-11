@@ -1,13 +1,26 @@
 # -*- coding: utf-8 -*-
+import os
 import json
-from brendapy.settings import CHEBI_DATA
+from brendapy.settings import CHEBI_OBO_DATA, CHEBI_JSON_DATA
+from pronto import Ontology
+
 
 def get_substances():
-    with open(CHEBI_DATA, "r") as fin:
-        CHEBI = json.load(fin)
-    return CHEBI
-    
-# if __name__ == "__main__":
-#     from pprint import pprint
-#     print("Loading chebi information")
-#     pprint(CHEBI["D-glucose"])
+    print("Loading chebi information. This may take a while ...")
+
+    if not os.path.exists(CHEBI_JSON_DATA):
+        onto = Ontology(CHEBI_OBO_DATA)
+        data = {}
+        for term in onto.terms():
+            if not term.name:
+                continue
+            data[term.name] = term.id
+
+        with open(CHEBI_JSON_DATA, "w", encoding="utf-8") as fp:
+            json.dump(data, fp)
+
+        return data
+    else:
+        with open(CHEBI_JSON_DATA, "r", encoding="utf-8") as fp:
+            data = json.load(fp)
+        return data

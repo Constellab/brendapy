@@ -1,11 +1,18 @@
 # -*- coding: utf-8 -*-
-import json
 from brendapy.settings import BTO_DATA
+from pronto import Ontology
+
 
 def get_bto():
-    with open(BTO_DATA, "r") as fin:
-        BTO = json.load(fin)
-    return BTO
+    print("Loading tissue information")
+    onto = Ontology(BTO_DATA)
+    data = {}
+    for term in onto.terms():
+        if not term.name:
+            continue
+        data[term.name] = term.id
+
+    return data
 
 # if __name__ == "__main__":
 #     print("Loading tissue information")

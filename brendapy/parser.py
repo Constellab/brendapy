@@ -60,9 +60,10 @@ from brendapy.taxonomy import Taxonomy
 from brendapy.tissues import get_bto
 from brendapy.substances import get_substances
 
-#TAXONOMY = Taxonomy()
+# TAXONOMY = Taxonomy()
 
 deprecated_id_re = re.compile("EC\s+(\d+\.\d+\.\d+\.\d+)")
+
 
 class BrendaParser(object):
     """ Parser for BRENDA information.
@@ -80,7 +81,7 @@ class BrendaParser(object):
         "TO", "TR", "TS"
     ]
 
-    #Gencovery: replace PATTERN_ORGANISM
+    # Gencovery: replace PATTERN_ORGANISM
     # PATTERN_RF = re.compile(r"^<(\d+?)> (.+) {Pubmed:\s*(\d*)\s*}")
     # PATTERN_ALL = re.compile(r"^#([,\d\s]+?)#(.+)<([,\d\s]+)>")
     # PATTERN_VALUE = re.compile(r"^([\d\.]+)\s+\{(.+)\}")
@@ -98,7 +99,7 @@ class BrendaParser(object):
         "SA": "µmol/min/mg"
     }
     CHEBI = None
-    
+
     def __init__(self, brenda_file=BRENDA_FILE):
         """ Initialize parser and parse BRENDA file.
 
@@ -208,7 +209,7 @@ class BrendaParser(object):
                     if bid in BrendaParser.BRENDA_KEYS:
                         in_item = True
                     else:
-                        #logging.error(f"{ec}_{bid}: BRENDA key not supported in line: `{line}`")
+                        # logging.error(f"{ec}_{bid}: BRENDA key not supported in line: `{line}`")
                         item = None
 
                 # store last entry
@@ -255,7 +256,7 @@ class BrendaParser(object):
                     pubmed = int(pubmed)  # integer keys for all pubmeds
                     results[bid][rid]['pubmed'] = pubmed
             else:
-                #logging.error(f"Reference could not be parsed: `{item}`")
+                # logging.error(f"Reference could not be parsed: `{item}`")
                 pass
         # everything else
         else:
@@ -277,15 +278,15 @@ class BrendaParser(object):
                     comment = "(#" + tokens[1].strip()
                     comment = comment[1:-1]
                 else:
-                    #logging.error(f"comment could not be parsed: '{data_all}'")
+                    # logging.error(f"comment could not be parsed: '{data_all}'")
                     pass
 
                 # check data
                 if len(data) == 0:
-                    #logging.warning(f"{ec}_{bid}: empty information not stored: '{data_all}'")
+                    # logging.warning(f"{ec}_{bid}: empty information not stored: '{data_all}'")
                     pass
                 elif data == "more":
-                    #logging.info(f"{ec}_{bid}: 'more' data not stored: {data_all}")
+                    # logging.info(f"{ec}_{bid}: 'more' data not stored: {data_all}")
                     return
 
                 # store info as dict
@@ -300,29 +301,29 @@ class BrendaParser(object):
                     info["units"] = BrendaParser.UNITS[bid]
                     if data.startswith("-999"):
                         # parse value
-                        #logging.info(f"{ec}_{bid}: '-999' values not parsed: {data}")
+                        # logging.info(f"{ec}_{bid}: '-999' values not parsed: {data}")
                         pass
                     else:
                         match_s = BrendaParser.PATTERN_VALUE.match(info["data"])
                         if match_s:
-                            #info['value'] = float(match_s.group(1))
+                            # info['value'] = float(match_s.group(1))
                             info['value'] = match_s.group(1)
 
                             substrate = match_s.group(2)
 
                             info['substrate'] = substrate
                             if substrate in cls.CHEBI:
-                                info['chebi'] = cls.CHEBI[substrate]["key"]
+                                info['chebi'] = cls.CHEBI[substrate]
                             else:
-                                #logging.info(f"Substrate could not be found in CHEBI: '{substrate}'")
+                                # logging.info(f"Substrate could not be found in CHEBI: '{substrate}'")
                                 pass
                         else:
                             # trying the simple patterns without substrate
                             try:
-                                #info['value'] = float(info["data"])
+                                # info['value'] = float(info["data"])
                                 info['value'] = info["data"]
                             except:
-                                #logging.error(f"data could not be converted to float: {info['data']}")
+                                # logging.error(f"data could not be converted to float: {info['data']}")
                                 pass
 
                 for pid in ids:
@@ -335,10 +336,10 @@ class BrendaParser(object):
                             results[bid][pid] = [info]
             else:
                 if bid == "SY" and item[0] != '#':
-                    #logging.info(f"{ec}_{bid}: generic synonyms are not stored: {item}")
+                    # logging.info(f"{ec}_{bid}: generic synonyms are not stored: {item}")
                     pass
                 else:
-                    #logging.error(f"{ec}_{bid}: could not be parsed: `{item}`")
+                    # logging.error(f"{ec}_{bid}: could not be parsed: `{item}`")
                     pass
 
     @staticmethod
@@ -361,8 +362,8 @@ class BrendaParser(object):
             self.ec_data[ec] = BrendaParser._parse_info_dict(ec, ec_str=self.ec_text[ec])
 
         ec_data = self.ec_data[ec]
-        proteins = {}  
-        
+        proteins = {}
+
         is_deprecated_ec = not ec_data['PR']
         if is_deprecated_ec:
             pass
@@ -371,7 +372,7 @@ class BrendaParser(object):
                 proteins[key] = BrendaProtein(ec=ec, key=key, data=ec_data)
 
         return proteins
-    
+
     def get_all_proteins(self, ec):
         """ Parses all BRENDA proteins for given EC number.
 
@@ -384,11 +385,11 @@ class BrendaParser(object):
 
         ec_data = self.ec_data[ec]
         deprecated_ec = {}
-        proteins = {}  
-        
+        proteins = {}
+
         def is_deprecated(_id):
             return ("transferred" in _id) or ("deleted" in _id)
-        
+
         _id = ec_data['ID']
         if is_deprecated(_id):
             deprecated_ec = {
@@ -396,27 +397,28 @@ class BrendaParser(object):
                 "new_ec": [],
                 "data": {
                     'ID': str(_id),
-                    'RN': str(ec_data.get("RN","")),
+                    'RN': str(ec_data.get("RN", "")),
                     "reason": "",
                 }
             }
 
             new_ec = deprecated_id_re.findall(_id)
             for n_ec in new_ec:
-                deprecated_ec["new_ec"].append( n_ec )
-                
+                deprecated_ec["new_ec"].append(n_ec)
+
             if "transferred" in _id:
                 deprecated_ec["data"]["reason"] = "transferred"
 
             if "deleted" in _id:
                 deprecated_ec["data"]["reason"] = "deleted"
-            
+
         else:
             for key in ec_data['PR'].keys():
                 proteins[key] = BrendaProtein(ec=ec, key=key, data=ec_data)
-        
+
         return proteins, deprecated_ec
-            
+
+
 class BrendaProtein(object):
     """ Stores BRENDA information for a protein entry.
 
@@ -427,10 +429,12 @@ class BrendaProtein(object):
     This class provides helper properties which allows to access
     the data based on the BRENDA keys in the flat file.
     """
-    #Gencovery: replace PATTERN_ORGANISM
-    #PATTERN_ORGANISM = re.compile(r"^(\w+)\s([\w\.]+)")
+    # Gencovery: replace PATTERN_ORGANISM
+    # PATTERN_ORGANISM = re.compile(r"^(\w+)\s([\w\.]+)")
     PATTERN_ORGANISM = re.compile(r"^([a-zA-Z0-9\-]+)\s([\w\.]+)")
-    PATTERN_UNIPROT = re.compile(r"([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?")
+    PATTERN_UNIPROT = re.compile(
+        r"([A-N,R-Z][0-9]([A-Z][A-Z, 0-9][A-Z, 0-9][0-9]){1,2})|([O,P,Q][0-9][A-Z, 0-9][A-Z, 0-9][A-Z, 0-9][0-9])(\.\d+)?")
+    BTO = None
 
     def __init__(self, ec, key, data):
         """ Construct protein object.
@@ -439,9 +443,11 @@ class BrendaProtein(object):
         :param key: integer protein key (BRENDA key for protein)
         :param data: data dictionary for the complete ec number
         """
-        #BTO
-        BTO = get_bto()
-        
+        # BTO
+        cls = type(self)
+        if not cls.BTO:
+            cls.BTO = get_bto()
+
         protein_info = data['PR'][key]['data']
 
         # organism
@@ -450,7 +456,7 @@ class BrendaProtein(object):
             organism = f"{match_organism.group(1)} {match_organism.group(2)}"
         else:
             organism = protein_info
-            #logging.warning(f"Organism could not be parsed from: '{protein_info}'")
+            # logging.warning(f"Organism could not be parsed from: '{protein_info}'")
 
         # taxonomy
         t = Taxonomy()
@@ -497,16 +503,16 @@ class BrendaProtein(object):
 
         # map tissues on Brenda Tissue Ontology
         tissues = set()
+        cls = type(self)
         if self.ST:
             for item in self.ST:
                 tissue = item['data']
-                bto = BTO.get(tissue, None)
+                bto = cls.BTO.get(tissue, None)
                 if bto:
-                    bto_term = bto["key"]
-                    item['bto'] = bto_term
-                    tissues.add(bto_term)
+                    item['bto'] = bto
+                    tissues.add(bto)
                 else:
-                    #logging.error(f"Source/Tissue not found in Brenda Tissue Ontology (BTO): '{tissue}'")
+                    # logging.error(f"Source/Tissue not found in Brenda Tissue Ontology (BTO): '{tissue}'")
                     pass
         self.data["tissues"] = tissues
 
