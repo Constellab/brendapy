@@ -36,13 +36,6 @@ class Settings:
         if self.BRENDA_FILE is None:
             raise Exception("The variable BRENDAPY_DATA_DIR is not set")
 
-        # self.BRENDA_FILE = os.path.join(self.BRENDAPY_DATA_DIR, "brenda", "brenda_download.txt")
-        # self.TAXONOMY_DIR = os.path.join(self.BRENDAPY_DATA_DIR, "ncbi", "taxdump")
-        # self.TAXONOMY_DATA = os.path.join(self.TAXONOMY_DIR, "taxonomy.json")
-        # self.BTO_DATA = os.path.join(self.BRENDAPY_DATA_DIR, "bto", "bto.owl")
-        # self.CHEBI_OBO_DATA = os.path.join(self.BRENDAPY_DATA_DIR, "chebi", "chebi.obo")
-        # self.CHEBI_JSON_DATA = os.path.join(self.BRENDAPY_DATA_DIR, "chebi", "chebi.json")
-
     @classmethod
     def initialize_data_dir(cls, *, brenda_file=None, taxonomy_dir=None, bto_file=None, chebi_file=None):
         assert isinstance(brenda_file, str) and len(brenda_file) != 0, "brenda_file is required"
