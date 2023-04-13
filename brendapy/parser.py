@@ -55,7 +55,6 @@ from collections import OrderedDict, defaultdict
 from pprint import pprint
 
 from brendapy import utils
-from brendapy.settings import BRENDA_FILE
 from brendapy.taxonomy import Taxonomy
 from brendapy.tissues import get_bto
 from brendapy.substances import get_substances
@@ -100,7 +99,7 @@ class BrendaParser(object):
     }
     CHEBI = None
 
-    def __init__(self, brenda_file=BRENDA_FILE):
+    def __init__(self, brenda_file):
         """ Initialize parser and parse BRENDA file.
 
         :param brenda_file: BRENDA text file

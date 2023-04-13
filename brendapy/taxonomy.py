@@ -44,7 +44,7 @@ import logging
 import time
 import ujson
 
-from brendapy.settings import TAXONOMY_DATA, TAXONOMY_DIR
+from brendapy.settings import Settings
 
 
 def parse_taxonomy_data():
@@ -62,8 +62,9 @@ def parse_taxonomy_data():
     name_tid_dict = {}
     node_parent_dict = {}
 
+    settings = Settings()
     # parse names information
-    with open(os.path.join(TAXONOMY_DIR, "names.dmp"), "r", encoding="utf-8") as f_names:
+    with open(os.path.join(settings.TAXONOMY_DIR, "names.dmp"), "r", encoding="utf-8") as f_names:
         for line in f_names:
             # every line is a single node which is converted to a dictionary entry
             items = [t.strip() for t in line.split("|")]
@@ -75,7 +76,7 @@ def parse_taxonomy_data():
                 tid_name_dict[tid] = name
 
     # parse tree information
-    with open(os.path.join(TAXONOMY_DIR, "nodes.dmp"), "r", encoding="utf-8") as f_nodes:
+    with open(os.path.join(settings.TAXONOMY_DIR, "nodes.dmp"), "r", encoding="utf-8") as f_nodes:
         for line in f_nodes:
             items = [t.strip() for t in line.split("|")]
             node, parent = int(items[0]), int(items[1])
@@ -87,7 +88,8 @@ def parse_taxonomy_data():
         "name_tid_dict": name_tid_dict,
         "node_parent_dict": node_parent_dict,
     }
-    with open(TAXONOMY_DATA, "w") as f_out:
+    settings = Settings()
+    with open(settings.TAXONOMY_DATA, "w") as f_out:
         ujson.dump(data, f_out)
 
     te = time.time()
@@ -101,8 +103,10 @@ class Taxonomy(object):
     name_tid_dict = None  # { ncbi_scientific_name: ncbi_id }
     node_parent_dict = None  # storage of tree information
 
-    def __init__(self, f_taxonomy=TAXONOMY_DATA):
-        if not os.path.exists(TAXONOMY_DATA):
+    def __init__(self):
+        settings = Settings()
+        f_taxonomy = settings.TAXONOMY_DATA
+        if not os.path.exists(f_taxonomy):
             parse_taxonomy_data()
 
         if Taxonomy.tid_name_dict is None:
